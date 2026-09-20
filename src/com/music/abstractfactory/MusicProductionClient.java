@@ -14,3 +14,5 @@ public class MusicProductionClient {
         vocalTrack.recordVocals();
     }
 }
+
+//client class

@@ -13,4 +13,5 @@ public interface TrackBuilder {
     TrackBuilder applyMastering();
     TrackBuilder setReleaseDate(LocalDate releaseDate);
     TrackBuilder setRecordingType(String recordingType);
+    TrackBuilder setProductionType(String productionType);
 }

@@ -6,3 +6,5 @@ public class StudioInstrumentalTrack implements InstrumentalTrack{
         System.out.println("Studio instrumental: ");
     }
 }
+
+//concrete product

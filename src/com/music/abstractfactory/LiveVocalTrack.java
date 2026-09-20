@@ -6,3 +6,5 @@ public class LiveVocalTrack implements VocalTrack {
         System.out.println("Live vocal record: ");
     }
 }
+
+//concrete product

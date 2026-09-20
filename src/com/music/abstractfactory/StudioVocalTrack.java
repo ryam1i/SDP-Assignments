@@ -6,3 +6,5 @@ public class StudioVocalTrack implements VocalTrack {
         System.out.println("Studio recording: ");
     }
 }
+
+//concrete product

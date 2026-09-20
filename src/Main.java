@@ -19,14 +19,18 @@ public class Main {
         SoundProducerDirector director = new SoundProducerDirector();
 
 
+        MusicProductionClient studioClient = new MusicProductionClient(new StudioTrackFactory());
+        studioClient.producePerformance();
+
         AudioTrackBuilder audioBuilder = new AudioTrackBuilder();
-        director.makePluggnbBeat(audioBuilder);
+        director.makePyramids(audioBuilder);
         Track track = audioBuilder.build();
         System.out.println(track);
 
 
         TrackManifestBuilder manifestBuilder = new TrackManifestBuilder();
-        director.makePluggnbBeat(manifestBuilder);
+        director.makePyramids(manifestBuilder);
+        manifestBuilder.setProductionType("Studio DAW recording");
         TrackReleaseManifest manifest = manifestBuilder.build();
         System.out.println(manifest);
 
@@ -39,6 +43,9 @@ public class Main {
         System.out.println();
 
 
+        MusicProductionClient liveClient = new MusicProductionClient(new LiveTrackFactory());
+        liveClient.producePerformance();
+
         Track customTrack = new AudioTrackBuilder()
                 .setTitle("Die For You - Live")
                 .setArtist("The Weeknd")
@@ -49,6 +56,7 @@ public class Main {
                 .setTitle("Die For You")
                 .setArtist("The Weeknd")
                 .setRecordingType("Live Performance")
+                .setProductionType("Live at So-Fi Stadium")
                 .setGenre(Genre.rnb)
                 .setBpm(67)
                 .setReleaseDate(LocalDate.of(2016, 11, 24))

@@ -14,6 +14,7 @@ public class AudioTrackBuilder implements TrackBuilder {
     private boolean isMastered;
     private LocalDate releaseDate;
     private String recordingType;
+    private String productionType;
 
     @Override
     public AudioTrackBuilder reset() {
@@ -24,6 +25,7 @@ public class AudioTrackBuilder implements TrackBuilder {
         this.bpm = 0;
         this.isMastered = false;
         this.recordingType = null;
+        this.productionType = null;
         return this;
     }
 
@@ -66,6 +68,12 @@ public class AudioTrackBuilder implements TrackBuilder {
     @Override
     public AudioTrackBuilder setRecordingType(String recordingType) {
         this.recordingType = recordingType;
+        return this;
+    }
+
+    @Override
+    public AudioTrackBuilder setProductionType(String productionType) {
+        this.productionType = productionType;
         return this;
     }
 

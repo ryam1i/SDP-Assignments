@@ -6,3 +6,5 @@ public class LiveInstrumentalTrack implements InstrumentalTrack {
         System.out.println("Live Instrumental: ");
     }
 }
+
+//concrete product

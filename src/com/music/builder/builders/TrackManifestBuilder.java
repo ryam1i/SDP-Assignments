@@ -59,6 +59,12 @@ public class TrackManifestBuilder implements TrackBuilder {
         return this;
     }
 
+    @Override
+    public TrackManifestBuilder setProductionType(String productionType) {
+        text.append("Production: ").append(productionType).append("\n");
+        return this;
+    }
+
     public TrackReleaseManifest build() {
         return new TrackReleaseManifest(text.toString());
     }

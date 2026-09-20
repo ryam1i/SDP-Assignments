@@ -5,7 +5,7 @@ import com.music.builder.domain.Genre;
 
 public class SoundProducerDirector {
 
-    public void makePluggnbBeat(TrackBuilder builder) {
+    public void makePyramids(TrackBuilder builder) {
         builder.reset()
                 .setTitle("Pyramids")
                 .setArtist("Frank Ocean")

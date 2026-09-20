@@ -1,114 +1,45 @@
-# Assignment #1 — Builder Pattern: Digital Audio Workstation (DAW)
+# Assignment #2 — Factory Method & Abstract Factory: Digital Audio Workstation (DAW)
 
 **Course:** Software Design Patterns  
-**Topic:** Music Track Production & Release Automation  
+**Topic:** Creational Patterns (Factory Method & Abstract Factory)
 
 ---
 
-## 1. Domain Description
-This project implements the classical **GoF Builder Pattern** representing a Digital Audio Workstation (DAW). 
-Building a music track is a complex, multi-step process involving composition, tempo, harmonic structure, and mastering.
+## Changes Overview
 
-The system supports **multiple representations** from the same construction workflow:
-- `Track`: The concrete domain object representing an audio composition.
-- `TrackReleaseManifest`: A distribution document containing release metadata for streaming services (Spotify/Apple Music).
+### 1. Factory Method Pattern (`com.music.factory`)
+- Added `AudioExporter` product interface for format exporting.
+- Added concrete exporter products: `WavAudioExporter` and `FlacAudioExporter`.
+- Added `AudioPublisher` abstract creator with `createExporter()` factory method and `publish(Track)` template logic.
+- Added concrete creators: `WavPublisher` and `FlacPublisher`.
 
----
+### 2. Abstract Factory Pattern (`com.music.abstractfactory`)
+- Added `TrackProductionFactory` abstract factory interface for track component families.
+- Added concrete factories: `StudioTrackFactory` (studio production) and `LiveTrackFactory` (live production).
+- Added abstract product interfaces: `VocalTrack` (`recordVocals`) and `InstrumentalTrack` (`playInstruments`).
+- Added concrete products: `StudioVocalTrack`, `StudioInstrumentalTrack`, `LiveVocalTrack`, and `LiveInstrumentalTrack`.
+- Added `MusicProductionClient` coordinating recording sessions via abstract interfaces.
 
-## 2. Pattern Components
+### 3. Builder & Domain Updates (`com.music.builder`)
+- Extended `TrackBuilder`, `AudioTrackBuilder`, and `TrackManifestBuilder` with `artist`, `releaseDate`, `recordingType`, and `productionType`.
+- Updated `Track` domain entity to store `title` and `artist`.
+- Expanded `Genre` enum with `rap`, `pluggnb`, `synthwave`, `rock`, `alternative`, `hiphop`, `rage`, and `rnb`.
+- Updated `SoundProducerDirector` with new preset `makePyramids`.
+- Standardized release manifest formatting in English.
+- Updated fail-fast validation in `AudioTrackBuilder.build()` to enforce non-empty track names.
 
-| Component | File | Responsibility |
-|---|---|---|
-| **Product 1** | `Track.java` | Complex domain product with immutable properties. |
-| **Product 2** | `TrackReleaseManifest.java` | Alternative textual representation of the track. |
-| **Builder Interface** | `TrackBuilder.java` | Declares common construction steps with method chaining (Fluent API). |
-| **Concrete Builder 1** | `AudioTrackBuilder.java` | Assembles `Track` and validates state before creation. |
-| **Concrete Builder 2** | `TrackManifestBuilder.java` | Assembles formatted release documentation. |
-| **Director** | `SoundProducerDirector.java` | Provides reusable production presets (`makeLoFiBeat`, `makeSynthwaveTrack`). |
-| **Client** | `Main.java` | Executes director presets, manual custom builds, and demonstrates validation. |
-
----
-
-## 3. Clean Code Principles Justification (Ch. 3)
-
-### 1. Meaningful, Intention-Revealing Names
-- **Before:**
-  ```java
-  builder.setB(80);
-  builder.setM(true);
-  ```
-- **After:**
-  ```java
-  builder.setBpm(80);
-  builder.applyMastering();
-  ```
-- **Justification:** Variable and method names explicitly convey their domain purpose, eliminating guesswork.
+### 4. Client Integration (`Main.java`)
+- Connected the full production pipeline:
+  1. Abstract Factory creates environment-specific performance (Studio & Live).
+  2. Builder constructs `Track` objects and distribution manifests.
+  3. Factory Method exports and publishes tracks in WAV and FLAC formats.
+  4. Exception handling verifies fail-fast construction.
 
 ---
 
-### 2. Small Functions & Single Level of Abstraction
-- **Before:** A large method mixing audio parameters, formatting text, and instantiating the object in one place.
-- **After:**
-  ```java
-  @Override
-  public AudioTrackBuilder setBpm(int bpm) {
-      this.bpm = bpm;
-      return this;
-  }
-  ```
-- **Justification:** Every method performs one focused operation and delegates higher-level orchestration to the client or director.
-
----
-
-### 3. No Magic Numbers or Strings (Enums & Named Constants)
-- **Before:**
-  ```java
-  if (genre.equals("lofi")) { ... }
-  if (bpm < 40 || bpm > 240) { ... }
-  ```
-- **After:**
-  ```java
-  private static final int MIN_BPM = 40;
-  private static final int MAX_BPM = 240;
-  public enum Genre { LO_FI, SYNTHWAVE, ROCK }
-  ```
-- **Justification:** Replaces error-prone raw literals with strongly typed enums and clear constants.
-
----
-
-### 4. Validated Construction (Fail-Fast)
-- **Before:** Silently allowing incomplete tracks (e.g., missing titles or impossible tempos) into the system, leading to later runtime exceptions.
-- **After:**
-  ```java
-  public Track build() {
-      if (title == null || title.isBlank()) {
-          throw new IllegalStateException("Ошибка: у трека должно быть название!");
-      }
-      if (bpm < MIN_BPM || bpm > MAX_BPM) {
-          throw new IllegalStateException("Ошибка: недопустимый BPM (" + bpm + ")");
-      }
-      return new Track(title, genre, bpm, isMastered);
-  }
-  ```
-- **Justification:** Enforces that a `Track` object is guaranteed to be in a consistent, valid state upon instantiation.
-
----
-
-### 5. Avoid Flag Arguments
-- **Before:**
-  ```java
-  builder.setMastering(true);
-  ```
-- **After:**
-  ```java
-  builder.applyMastering();
-  ```
-- **Justification:** Eliminates boolean flags in method signatures, making method calls expressive commands.
-
----
-
-## 4. Execution
-```bash
-javac -d out src/com/music/builder/domain/*.java src/com/music/builder/builders/*.java src/com/music/builder/director/*.java src/Main.java
-java -cp out Main
-```
+## Clean Code Principles Applied
+- **Meaningful Names:** Domain-driven identifiers (`createExporter`, `producePerformance`, `applyMastering`).
+- **Single Responsibility (SRP):** Separate classes for factories, exporters, publishers, and builders.
+- **Open/Closed Principle (OCP):** New audio formats and production environments can be added without altering existing code.
+- **Dependency Inversion (DIP):** Client classes depend exclusively on abstractions (`TrackProductionFactory`, `AudioExporter`).
+- **Fail-Fast Validation:** Invariants are validated immediately at build time before objects are created.

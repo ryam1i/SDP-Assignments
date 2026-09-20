@@ -3,27 +3,39 @@ package com.music.builder.builders;
 import com.music.builder.domain.Genre;
 import com.music.builder.domain.Track;
 
+import java.time.LocalDate;
+
 public class AudioTrackBuilder implements TrackBuilder {
-    private static final int MIN_BPM = 40;
-    private static final int MAX_BPM = 240;
 
     private String title;
+    private String artist;
     private Genre genre;
     private int bpm;
     private boolean isMastered;
+    private LocalDate releaseDate;
+    private String recordingType;
 
     @Override
     public AudioTrackBuilder reset() {
         this.title = null;
+        this.artist = null;
+        this.releaseDate = null;
         this.genre = null;
         this.bpm = 0;
         this.isMastered = false;
+        this.recordingType = null;
         return this;
     }
 
     @Override
     public AudioTrackBuilder setTitle(String title) {
         this.title = title;
+        return this;
+    }
+
+    @Override
+    public AudioTrackBuilder setArtist(String artist) {
+        this.artist = artist;
         return this;
     }
 
@@ -45,13 +57,22 @@ public class AudioTrackBuilder implements TrackBuilder {
         return this;
     }
 
+    @Override
+    public AudioTrackBuilder setReleaseDate(LocalDate releaseDate) {
+        this.releaseDate = releaseDate;
+        return this;
+    }
+
+    @Override
+    public AudioTrackBuilder setRecordingType(String recordingType) {
+        this.recordingType = recordingType;
+        return this;
+    }
+
     public Track build() {
         if (title == null || title.isBlank()) {
-            throw new IllegalStateException("Ошибка: у трека должно быть название!");
+            throw new IllegalStateException("Track must contain the name");
         }
-        if (bpm < MIN_BPM || bpm > MAX_BPM) {
-            throw new IllegalStateException("Ошибка: недопустимый BPM (" + bpm + ")");
-        }
-        return new Track(title, genre, bpm, isMastered);
+        return new Track(title, artist);
     }
 }

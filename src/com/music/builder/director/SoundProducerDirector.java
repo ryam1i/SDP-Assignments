@@ -5,18 +5,21 @@ import com.music.builder.domain.Genre;
 
 public class SoundProducerDirector {
 
-    public void makeLoFiBeat(TrackBuilder builder) {
+    public void makePluggnbBeat(TrackBuilder builder) {
         builder.reset()
-                .setTitle("Coffee & Coding")
-                .setGenre(Genre.LO_FI)
-                .setBpm(80)
+                .setTitle("Pyramids")
+                .setArtist("Frank Ocean")
+                .setGenre(Genre.alternative)
+                .setBpm(117)
+                .setRecordingType("Studio Recording")
                 .applyMastering();
     }
 
     public void makeSynthwaveTrack(TrackBuilder builder) {
         builder.reset()
                 .setTitle("Cyber Drive 2088")
-                .setGenre(Genre.SYNTHWAVE)
+                .setArtist("Unknown")
+                .setGenre(Genre.synthwave)
                 .setBpm(128)
                 .applyMastering();
     }

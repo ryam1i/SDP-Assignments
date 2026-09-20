@@ -9,6 +9,6 @@ public class TrackReleaseManifest {
 
     @Override
     public String toString() {
-        return "Манифест релиза:\n" + text;
+        return "Release manifest:\n" + text;
     }
 }

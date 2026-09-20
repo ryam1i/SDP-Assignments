@@ -4,6 +4,9 @@ import com.music.builder.director.SoundProducerDirector;
 import com.music.builder.domain.Genre;
 import com.music.builder.domain.Track;
 import com.music.builder.domain.TrackReleaseManifest;
+import com.music.factory.AudioPublisher;
+import com.music.factory.FlacPublisher;
+import com.music.factory.WavPublisher;
 
 public class Main {
     public static void main(String[] args) {
@@ -20,6 +23,13 @@ public class Main {
         director.makeLoFiBeat(manifestBuilder);
         TrackReleaseManifest manifest = manifestBuilder.build();
         System.out.println(manifest);
+
+
+        AudioPublisher flacPublisher = new FlacPublisher();
+        AudioPublisher wavPublisher = new WavPublisher();
+
+        flacPublisher.publish(track);
+        wavPublisher.publish(track);
 
 
         Track customTrack = new AudioTrackBuilder()

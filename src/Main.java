@@ -7,20 +7,21 @@ import com.music.builder.domain.TrackReleaseManifest;
 import com.music.factory.AudioPublisher;
 import com.music.factory.FlacPublisher;
 import com.music.factory.WavPublisher;
-import com.music.abstractfactory.LiveTrackFactory;
-import com.music.abstractfactory.MusicProductionClient;
-import com.music.abstractfactory.StudioTrackFactory;
-import com.music.abstractfactory.TrackProductionFactory;
-
+import com.music.builder.builders.AlbumManifestBuilder;
+import com.music.builder.domain.AlbumReleaseManifest;
+import com.music.bridge.AlbumRelease;
+import com.music.bridge.AppleMusicGateway;
+import com.music.bridge.MusicRelease;
+import com.music.bridge.SpotifyGateway;
+import com.music.bridge.StreamingPlatformGateway;
 import java.time.LocalDate;
 
 public class Main {
     public static void main(String[] args) {
+
+        
         SoundProducerDirector director = new SoundProducerDirector();
 
-
-        MusicProductionClient studioClient = new MusicProductionClient(new StudioTrackFactory());
-        studioClient.producePerformance();
 
         AudioTrackBuilder audioBuilder = new AudioTrackBuilder();
         director.makePyramids(audioBuilder);
@@ -43,16 +44,14 @@ public class Main {
         System.out.println();
 
 
-        MusicProductionClient liveClient = new MusicProductionClient(new LiveTrackFactory());
-        liveClient.producePerformance();
-
         Track customTrack = new AudioTrackBuilder()
                 .setTitle("Die For You - Live")
                 .setArtist("The Weeknd")
                 .build();
         System.out.println(customTrack);
 
-        TrackReleaseManifest rnbManifest = new TrackManifestBuilder()
+
+        TrackReleaseManifest customTrackManifest = new TrackManifestBuilder()
                 .setTitle("Die For You")
                 .setArtist("The Weeknd")
                 .setRecordingType("Live Performance")
@@ -61,10 +60,32 @@ public class Main {
                 .setBpm(67)
                 .setReleaseDate(LocalDate.of(2016, 11, 24))
                 .build();
-        System.out.println(rnbManifest);
+        System.out.println(customTrackManifest);
 
 
         flacPublisher.publish(customTrack);
+        System.out.println();
+
+
+         AlbumReleaseManifest albumManifest = new AlbumManifestBuilder()
+            .setTitle("White Pony")
+            .setArtist("Deftones")
+            .setGenre("Alternative Metal")
+            .setReleaseDate("2000-06-20")
+            .setRecordingType("Studio")
+            .setProductionType("Studio DAW recording")
+            .build();
+        System.out.println(albumManifest);
+
+
+        StreamingPlatformGateway spotify = new SpotifyGateway();
+        StreamingPlatformGateway appleMusic = new AppleMusicGateway();
+
+        MusicRelease albumRelease = new AlbumRelease(spotify, "White Pony", "Deftones", "UPC-093624734827", 12);
+        albumRelease.publishRelease();
+        System.out.println();
+        albumRelease.setGateway(appleMusic);
+        albumRelease.publishRelease();
         System.out.println();
 
 

@@ -2,9 +2,6 @@ package com.music.builder.builders;
 
 import com.music.builder.domain.Genre;
 import com.music.builder.domain.TrackReleaseManifest;
-import com.music.abstractfactory.LiveTrackFactory;
-import com.music.abstractfactory.StudioTrackFactory;
-import com.music.abstractfactory.TrackProductionFactory;
 
 import java.time.LocalDate;
 

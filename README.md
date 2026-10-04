@@ -1,45 +1,42 @@
-# Assignment #2 — Factory Method & Abstract Factory: Digital Audio Workstation (DAW)
+# Assignment #3 — Structural Design Patterns: Bridge & System Expansion
 
 **Course:** Software Design Patterns  
-**Topic:** Creational Patterns (Factory Method & Abstract Factory)
+**Topic:** Structural Patterns (Bridge Pattern) & Domain Expansion
 
 ---
 
 ## Changes Overview
 
-### 1. Factory Method Pattern (`com.music.factory`)
-- Added `AudioExporter` product interface for format exporting.
-- Added concrete exporter products: `WavAudioExporter` and `FlacAudioExporter`.
-- Added `AudioPublisher` abstract creator with `createExporter()` factory method and `publish(Track)` template logic.
-- Added concrete creators: `WavPublisher` and `FlacPublisher`.
+### 1. Bridge Pattern (`com.music.bridge`)
+- **Implementor Interface (`StreamingPlatformGateway`):** Declares platform operations (`authenticate` and `uploadAudioMetadata`).
+- **Concrete Implementors:**
+  - `SpotifyGateway`: Implements authentication and metadata distribution for Spotify Partner API v2.
+  - `AppleMusicGateway`: Implements authentication and metadata distribution for Apple Music Connect.
+- **Abstraction (`MusicRelease`):** Abstract base class maintaining a reference to `StreamingPlatformGateway`, providing runtime gateway swapping via `setGateway()`.
+- **Refined Abstractions:**
+  - `AlbumRelease`: Manages multi-track album distribution and track counts.
+  - `SingleTrackRelease`: Manages standalone single-track distribution.
 
-### 2. Abstract Factory Pattern (`com.music.abstractfactory`)
-- Added `TrackProductionFactory` abstract factory interface for track component families.
-- Added concrete factories: `StudioTrackFactory` (studio production) and `LiveTrackFactory` (live production).
-- Added abstract product interfaces: `VocalTrack` (`recordVocals`) and `InstrumentalTrack` (`playInstruments`).
-- Added concrete products: `StudioVocalTrack`, `StudioInstrumentalTrack`, `LiveVocalTrack`, and `LiveInstrumentalTrack`.
-- Added `MusicProductionClient` coordinating recording sessions via abstract interfaces.
+### 2. Builder & Domain Expansion (`com.music.builder`)
+- **Domain Models:**
+  - `Album`: Lightweight domain entity (`title`, `artist`) representing audio album releases.
+  - `AlbumReleaseManifest`: Textual release manifest detailing complete album production metadata.
+- **Builders:**
+  - `AlbumBuilder`: Builder interface for configuring album metadata (`title`, `artist`, `genre`, `releaseDate`, `recordingType`, `productionType`).
+  - `AudioAlbumBuilder`: Concrete builder producing `Album` instances with fail-fast validation.
+  - `AlbumManifestBuilder`: Concrete builder constructing structured `AlbumReleaseManifest` documents.
 
-### 3. Builder & Domain Updates (`com.music.builder`)
-- Extended `TrackBuilder`, `AudioTrackBuilder`, and `TrackManifestBuilder` with `artist`, `releaseDate`, `recordingType`, and `productionType`.
-- Updated `Track` domain entity to store `title` and `artist`.
-- Expanded `Genre` enum with `rap`, `pluggnb`, `synthwave`, `rock`, `alternative`, `hiphop`, `rage`, and `rnb`.
-- Updated `SoundProducerDirector` with new preset `makePyramids`.
-- Standardized release manifest formatting in English.
-- Updated fail-fast validation in `AudioTrackBuilder.build()` to enforce non-empty track names.
-
-### 4. Client Integration (`Main.java`)
-- Connected the full production pipeline:
-  1. Abstract Factory creates environment-specific performance (Studio & Live).
-  2. Builder constructs `Track` objects and distribution manifests.
-  3. Factory Method exports and publishes tracks in WAV and FLAC formats.
-  4. Exception handling verifies fail-fast construction.
+### 3. Client Integration (`Main.java`)
+- Extended the production pipeline with album manifest generation via `AlbumManifestBuilder`.
+- Demonstrated the Bridge pattern workflow:
+  1. Instantiated platform gateways (`SpotifyGateway`, `AppleMusicGateway`).
+  2. Distributed `AlbumRelease` via Spotify.
+  3. Dynamically switched the streaming platform to Apple Music at runtime using `setGateway()`, showcasing loose coupling between abstraction and implementation.
 
 ---
 
-## Clean Code Principles Applied
-- **Meaningful Names:** Domain-driven identifiers (`createExporter`, `producePerformance`, `applyMastering`).
-- **Single Responsibility (SRP):** Separate classes for factories, exporters, publishers, and builders.
-- **Open/Closed Principle (OCP):** New audio formats and production environments can be added without altering existing code.
-- **Dependency Inversion (DIP):** Client classes depend exclusively on abstractions (`TrackProductionFactory`, `AudioExporter`).
-- **Fail-Fast Validation:** Invariants are validated immediately at build time before objects are created.
+## Clean Code & SOLID Principles Applied
+- **Bridge Decoupling:** Separates the release abstraction hierarchy (`MusicRelease`) from the platform implementation hierarchy (`StreamingPlatformGateway`), allowing both to evolve independently.
+- **Single Responsibility Principle (SRP):** Domain entities, builders, manifest formatters, and platform gateways each handle a single concern.
+- **Open/Closed Principle (OCP):** New streaming platforms (e.g., Tidal, YouTube Music) and new release formats (e.g., EP) can be added without modifying existing code.
+- **Dependency Inversion Principle (DIP):** High-level release abstractions depend strictly on the `StreamingPlatformGateway` interface, never on concrete gateway classes.

@@ -1,16 +1,16 @@
 package com.music.builder.domain;
 
-public class Track {
+public class Album {
     private final String title;
     private final String artist;
 
-    public Track(String title, String artist) {
+    public Album(String title, String artist) {
         this.title = title;
         this.artist = artist;
     }
 
     @Override
     public String toString() {
-        return "Track: " + title + " | Artist: " + artist;
+        return "Album: " + title + " | Artist: " + artist + "";
     }
 }

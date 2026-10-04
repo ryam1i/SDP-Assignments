@@ -1,9 +1,9 @@
 package com.music.builder.domain;
 
-public class TrackReleaseManifest {
+public class AlbumReleaseManifest {
     private final String text;
 
-    public TrackReleaseManifest(String text) {
+    public AlbumReleaseManifest(String text) {
         this.text = text;
     }
 

@@ -1,43 +1,44 @@
-# Assignment #4 — Facade Pattern
+# Assignment #5 — Strategy Pattern
 
 **Course:** Software Design Patterns  
-**Topic:** Facade Structural Pattern  
-**Package:** `com.fintech`
+**Topic:** Strategy Behavioral Pattern  
+**Package:** `com.fintech.strategy`
 
 ---
 
 ## Overview
 
-This project implements the **Facade pattern** for a consumer bank loan approval process. 
-Instead of having the client coordinate multiple verification steps manually, `BankLoanFacade` handles the entire underwriting workflow in a single call.
+This project implements the **Strategy pattern** for calculating loan repayment schedules in a banking system. 
+Instead of hardcoding interest formulas and using `if-else` or `switch` statements inside the calculator, the calculation logic is separated into interchangeable strategy classes. The client can switch repayment algorithms at runtime.
 
-### Subsystem Classes (`com.fintech.subsystem`)
-- `IdentityValidator`: Checks if the IIN is 12 digits and not blacklisted.
-- `CreditScoreService`: Returns the client's credit rating (score scale 300–850).
-- `SolvencyService`: Verifies that the client's salary is enough to cover current debt and the new monthly payment.
-- `TransferService`: Generates a contract ID (`KZ-XXXXXX`) and completes the transfer.
+### Architecture Components
 
-### Facade (`com.fintech.facade`)
-- `BankLoanFacade`: Coordinates the 4 services in order:
-  1. Validates identity (rejects if invalid or blacklisted).
-  2. Checks credit score (sets 16% or 22% rate, or rejects if score is under 600).
-  3. Checks solvency (rejects if monthly payment is too high for salary).
-  4. Disburses the loan and returns the contract result.
+1. **Strategy Interface (`RepaymentStrategy`):**
+   - Declares the common method `calculate(amount, months, annualRate)` implemented by all repayment algorithms.
 
-### Models & Client
-- `Applicant`: Stores borrower data (name, IIN, salary, current debt).
-- `LoanResult`: Holds the loan outcome and formats a clean single-line summary.
-- `Main`: Tests approval, rejection by income, rejection by blacklist, and includes a direct check using `IdentityValidator` to show that subsystem classes work independently.
+2. **Concrete Strategies (3 algorithms):**
+   - `AnnuityRepaymentStrategy`: Equal monthly payments throughout the entire term (standard bank annuity).
+   - `DifferentiatedRepaymentStrategy`: Fixed principal reduction with decreasing monthly payments as remaining debt drops.
+   - `GracePeriodRepaymentStrategy`: 3-month interest-only grace period before full repayment begins.
+
+3. **Context (`LoanCalculator`):**
+   - Holds a reference to a `RepaymentStrategy`.
+   - Provides `setStrategy(RepaymentStrategy strategy)` for dynamic runtime switching.
+   - Contains zero conditional branching logic; simply delegates calculation to the active strategy.
+
+4. **Model & Client:**
+   - `RepaymentPlan`: Stores calculation details (`name`, `total`, `note`) and formats a clean one-line summary.
+   - `Main`: Demonstrates configuring the calculator and switching between all three strategies at runtime for the same loan parameters.
 
 ---
 
-## Clean Code Principles
+## Clean Code Principles Applied
 
-1. **Single Responsibility Principle (SRP):** `BankLoanFacade` only organizes the steps of the loan pipeline. It doesn't calculate debt ratios or validate IINs itself.
-2. **Principle of Least Knowledge (Law of Demeter):** `Main` only calls `BankLoanFacade` and doesn't need to know how the subsystem classes work inside.
-3. **Information Hiding:** The facade takes basic arguments and returns a clean `LoanResult` without exposing internal subsystem objects.
-4. **Meaningful Names:** Class and method names like `canAfford`, `isValid`, and `applyForLoan` explain their purpose clearly without comments.
-5. **Subsystem Independence:** None of the 4 subsystem classes depend on the facade. Advanced clients can still use them directly when needed.
+1. **Elimination of Conditional Logic:** Replaced `if-else` or `switch` statements with polymorphism. The `LoanCalculator` executes the algorithm without checking what type of strategy it is.
+2. **Single Responsibility Principle (SRP):** Each strategy class encapsulates exactly one mathematical repayment model and has only one reason to change.
+3. **Open/Closed Principle (OCP):** New repayment schemes (such as promotional 0% installment plans) can be added simply by creating a new class implementing `RepaymentStrategy` without editing existing code.
+4. **Context is Algorithm-Agnostic:** `LoanCalculator` depends only on the `RepaymentStrategy` abstraction and knows nothing about internal formula mechanics.
+5. **Meaningful, Intention-Revealing Names:** Class and method names (`AnnuityRepaymentStrategy`, `LoanCalculator`, `setStrategy`, `calculate`) clearly state their purpose without needing comments.
 
 ---
 
@@ -45,5 +46,5 @@ Instead of having the client coordinate multiple verification steps manually, `B
 
 ```bash
 javac -d bin $(find src -name "*.java")
-java -cp bin com.fintech.Main
+java -cp bin com.fintech.strategy.Main
 ```
